@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Excel - Semaine 1 du Défi 🚀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .quiz-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .quiz-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+        }
+
+        .quiz-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            color: #6c757d;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .question-container {
+            padding: 30px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question {
+            display: none;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options {
+            list-style: none;
+        }
+
+        .option {
+            margin-bottom: 15px;
+        }
+
+        .option input[type="radio"] {
+            display: none;
+        }
+
+        .option label {
+            display: block;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .option label:hover {
+            border-color: #667eea;
+            background: #f1f3ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .option label:hover::before {
+            left: 100%;
+        }
+
+        .option input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+
+        .option.correct label {
+            background: linear-gradient(135deg, #28a745, #20c997) !important;
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+
+        .option.incorrect label {
+            background: linear-gradient(135deg, #dc3545, #c82333) !important;
+            color: white !important;
+            border-color: #dc3545 !important;
+        }
+
+        .navigation {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(32, 201, 151, 0.2));
+            top: -10px;
+            left: -10px;
+            z-index: -1;
+        }
+
+        .results h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .results p {
+            color: #6c757d;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .share-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            background: #0077b5;
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            background: #005885;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 10px;
+            }
+            
+            .quiz-header {
+                padding: 20px;
+            }
+            
+            .quiz-title {
+                font-size: 24px;
+            }
+            
+            .question-container {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">Quiz – Semaine 1 du défi Excel 🚀</h1>
+            <p class="quiz-subtitle">Tu as suivi les 7 premiers jours de formation ? Viens tester ce que tu as retenu (et te challenger un peu 😏)</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 7</div>
+        </div>
+
+        <div class="question-container" id="questionContainer">
+            <!-- Question 1 -->
+            <div class="question active" data-question="1">
+                <div class="question-number">JOUR 1</div>
+                <h2 class="question-text">Pourquoi Excel est-il utile dans le monde professionnel ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q1a" name="q1" value="a">
+                        <label for="q1a">Automatiser les tâches répétitives</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q1b" name="q1" value="b">
+                        <label for="q1b">Analyser des données</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q1c" name="q1" value="c">
+                        <label for="q1c">Présenter des informations</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q1d" name="q1" value="d">
+                        <label for="q1d">Toutes les réponses ci-dessus</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback1">
+                    <strong>Correct !</strong> Excel est effectivement un outil polyvalent qui permet d'automatiser, d'analyser, de présenter et de gérer des données.
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question" data-question="2">
+                <div class="question-number">JOUR 2</div>
+                <h2 class="question-text">À quoi sert le ruban dans Excel ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q2a" name="q2" value="a">
+                        <label for="q2a">Afficher les noms de colonnes</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q2b" name="q2" value="b">
+                        <label for="q2b">Accéder aux outils et fonctionnalités</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q2c" name="q2" value="c">
+                        <label for="q2c">Trier des données automatiquement</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback2">
+                    <strong>Exact !</strong> Le ruban est l'interface principale d'Excel qui regroupe tous les outils et fonctionnalités par onglets thématiques.
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question" data-question="3">
+                <div class="question-number">JOUR 3</div>
+                <h2 class="question-text">Que se passe-t-il si tu tapes "12/06/2025" dans une cellule ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q3a" name="q3" value="a">
+                        <label for="q3a">Excel l'interprète comme du texte</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q3b" name="q3" value="b">
+                        <label for="q3b">Excel l'interprète comme une date</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q3c" name="q3" value="c">
+                        <label for="q3c">Excel l'interprète comme un nombre décimal</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback3">
+                    <strong>Parfait !</strong> Excel reconnaît automatiquement les formats de date et les convertit en valeurs de date utilisables pour les calculs.
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question" data-question="4">
+                <div class="question-number">JOUR 4</div>
+                <h2 class="question-text">Quelle est la meilleure pratique pour la mise en forme ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q4a" name="q4" value="a">
+                        <label for="q4a">Utiliser des couleurs criardes pour attirer l'attention</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q4b" name="q4" value="b">
+                        <label for="q4b">Privilégier les bordures nettes et la lisibilité</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q4c" name="q4" value="c">
+                        <label for="q4c">Toujours utiliser la police Comic Sans</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback4">
+                    <strong>Excellent !</strong> La lisibilité et la clarté sont essentielles pour un document professionnel efficace.
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question" data-question="5">
+                <div class="question-number">JOUR 5</div>
+                <h2 class="question-text">Que permet l'option "Figer les volets" ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q5a" name="q5" value="a">
+                        <label for="q5a">Geler ton PC temporairement</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q5b" name="q5" value="b">
+                        <label for="q5b">Garder certaines lignes/colonnes visibles au scroll</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q5c" name="q5" value="c">
+                        <label for="q5c">Verrouiller les cellules contre la modification</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback5">
+                    <strong>Bravo !</strong> Figer les volets permet de garder les en-têtes visibles même en faisant défiler un grand tableau.
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question" data-question="6">
+                <div class="question-number">JOUR 6</div>
+                <h2 class="question-text">Quel raccourci transforme un tableau simple en tableau structuré ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q6a" name="q6" value="a">
+                        <label for="q6a">Ctrl + L</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q6b" name="q6" value="b">
+                        <label for="q6b">Ctrl + T</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q6c" name="q6" value="c">
+                        <label for="q6c">Alt + F4</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback6">
+                    <strong>Parfait !</strong> Ctrl + T est le raccourci magique pour créer un tableau structuré avec toutes ses fonctionnalités avancées.
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question" data-question="7">
+                <div class="question-number">JOUR 7</div>
+                <h2 class="question-text">Que permet la validation des données ?</h2>
+                <ul class="options">
+                    <li class="option">
+                        <input type="radio" id="q7a" name="q7" value="a">
+                        <label for="q7a">Contrôler et limiter les saisies dans les cellules</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q7b" name="q7" value="b">
+                        <label for="q7b">Ajouter des commentaires automatiquement</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q7c" name="q7" value="c">
+                        <label for="q7c">Supprimer automatiquement les erreurs</label>
+                    </li>
+                </ul>
+                <div class="feedback" id="feedback7">
+                    <strong>Excellent !</strong> La validation des données est un outil puissant pour maintenir la qualité et la cohérence des données saisies.
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="btn btn-secondary" id="prevBtn" onclick="changeQuestion(-1)" disabled>Précédent</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Suivant</button>
+        </div>
+
+        <div class="results" id="results">
+            <div class="score-circle" id="scoreCircle">
+                <span id="scoreText">0/7</span>
+            </div>
+            <h2 id="resultTitle">Résultat</h2>
+            <p id="resultMessage">Message de résultat</p>
+            
+            <div class="share-section">
+                <p><strong>Partage ton score sur LinkedIn !</strong></p>
+                <a href="#" class="share-btn" id="shareBtn" target="_blank">
+                    📱 Partager sur LinkedIn
+                </a>
+            </div>
+            
+            <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top: 20px;">
+                🔄 Recommencer le quiz
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 7;
+        let answers = {};
+        let score = 0;
+        let showingResults = false;
+
+        // Bonnes réponses
+        const correctAnswers = {
+            1: 'd', // Toutes les réponses
+            2: 'b', // Accéder aux outils
+            3: 'b', // Date
+            4: 'b', // Bordures nettes et lisibilité
+            5: 'b', // Garder lignes/colonnes visibles
+            6: 'b', // Ctrl + T
+            7: 'a'  // Contrôler les saisies
+        };
+
+        function updateProgress() {
+            const progress = (currentQuestion - 1) / totalQuestions * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion} sur ${totalQuestions}`;
+        }
+
+        function showQuestion(questionNum) {
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            document.querySelector(`[data-question="${questionNum}"]`).classList.add('active');
+            
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentQuestion === 1;
+            
+            if (currentQuestion === totalQuestions) {
+                nextBtn.textContent = 'Voir les résultats';
+            } else {
+                nextBtn.textContent = 'Suivant';
+            }
+            
+            // Vérifier si une réponse est sélectionnée
+            const currentAnswer = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            nextBtn.disabled = !currentAnswer && !showingResults;
+        }
+
+        function changeQuestion(direction) {
+            if (direction > 0 && currentQuestion < totalQuestions) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else if (direction < 0 && currentQuestion > 1) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            const selectedAnswer = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            
+            if (!selectedAnswer && currentQuestion <= totalQuestions) {
+                alert('Veuillez sélectionner une réponse avant de continuer.');
+                return;
+            }
+            
+            if (selectedAnswer) {
+                answers[currentQuestion] = selectedAnswer.value;
+                showFeedback(currentQuestion);
+            }
+            
+            if (currentQuestion === totalQuestions) {
+                setTimeout(() => {
+                    calculateAndShowResults();
+                }, 2000);
+            } else {
+                setTimeout(() => {
+                    currentQuestion++;
+                    showQuestion(currentQuestion);
+                }, 2000);
+            }
+        }
+
+        function showFeedback(questionNum) {
+            const selectedAnswer = answers[questionNum];
+            const isCorrect = selectedAnswer === correctAnswers[questionNum];
+            const feedbackElement = document.getElementById(`feedback${questionNum}`);
+            
+            // Marquer visuellement la bonne/mauvaise réponse
+            const options = document.querySelectorAll(`input[name="q${questionNum}"]`);
+            options.forEach(option => {
+                const optionElement = option.closest('.option');
+                if (option.value === correctAnswers[questionNum]) {
+                    optionElement.classList.add('correct');
+                } else if (option.checked && option.value !== correctAnswers[questionNum]) {
+                    optionElement.classList.add('incorrect');
+                }
+            });
+            
+            // Afficher le feedback
+            feedbackElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedbackElement.style.display = 'block';
+            
+            if (!isCorrect) {
+                feedbackElement.innerHTML = `<strong>Pas tout à fait...</strong> La bonne réponse était : ${getAnswerText(questionNum, correctAnswers[questionNum])}`;
+            }
+        }
+
+        function getAnswerText(questionNum, answerValue) {
+            const label = document.querySelector(`label[for="q${questionNum}${answerValue}"]`);
+            return label ? label.textContent : '';
+        }
+
+        function calculateAndShowResults() {
+            score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (answers[i] === correctAnswers[i]) {
+                    score++;
+                }
+            }
+            
+            showingResults = true;
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('results').classList.add('show');
+            document.querySelector('.navigation').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            // Mettre à jour l'affichage des résultats
+            document.getElementById('scoreText').textContent = `${score}/${totalQuestions}`;
+            
+            let title, message, shareText;
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            if (percentage >= 85) {
+                title = "🏆 Excellent travail !";
+                message = `Tu maîtrises déjà bien Excel ! ${score} bonnes réponses sur ${totalQuestions}. Tu es prêt(e) pour la suite du défi !`;
+                shareText = `🚀 Je viens de terminer le Quiz Excel - Semaine 1 avec un score de ${score}/${totalQuestions} ! Excellent début pour mon parcours d'apprentissage Excel. #Excel #Formation #Défi`;
+            } else if (percentage >= 60) {
+                title = "👍 Bon travail !";
+                message = `Pas mal du tout ! ${score} bonnes réponses sur ${totalQuestions}. Continue comme ça, tu es sur la bonne voie !`;
+                shareText = `📊 Quiz Excel - Semaine 1 terminé ! Score : ${score}/${totalQuestions}. En bonne voie pour maîtriser Excel ! #Excel #Formation #Apprentissage`;
+            } else {
+                title = "🎯 Continue tes efforts !";
+                message = `${score} bonnes réponses sur ${totalQuestions}. Pas de souci, c'est en pratiquant qu'on progresse ! Reprends les concepts et retente ta chance.`;
+                shareText = `📈 Premier quiz Excel dans la poche ! Score : ${score}/${totalQuestions}. Chaque étape compte dans l'apprentissage ! #Excel #Formation #Progression`;
+            }
+            
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultMessage').textContent = message;
+            
+            // Préparer le lien de partage LinkedIn
+            const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareText)}`;
+            document.getElementById('shareBtn').href = linkedinUrl;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            score = 0;
+            showingResults = false;
+            
+            // Réinitialiser l'interface
+            document.getElementById('questionContainer').style.display = 'flex';
+            document.getElementById('results').classList.remove('show');
+            document.querySelector('.navigation').style.display = 'flex';
+            document.querySelector('.progress-container').style.display = 'block';
+            
+            // Réinitialiser toutes les questions
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.style.display = 'none';
+                feedback.classList.remove('correct', 'incorrect');
+            });
+            
+            showQuestion(1);
+        }
+
+        // Gérer la sélection des réponses
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                updateNavigationButtons();
+            }
+        });
+
+        // Initialiser le quiz
+        updateProgress();
+        updateNavigationButtons();
+    </script>
+</body>
+</html>
