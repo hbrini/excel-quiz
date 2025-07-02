@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f7f9fa;
+      background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
       color: #222;
       margin: 0;
       padding: 0;
@@ -17,89 +17,150 @@
       min-height: 100vh;
     }
     .container {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.07);
-      padding: 32px 24px;
+      background: #ffffffee;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      padding: 38px 30px;
       max-width: 600px;
-      width: 90%;
+      width: 95%;
       text-align: center;
+      backdrop-filter: saturate(180%) blur(12px);
+      position: relative;
+      overflow: hidden;
     }
     h1 {
-      color: #1a73e8;
-      margin-bottom: 20px;
+      color: #004a99;
+      margin-bottom: 24px;
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0, 74, 153, 0.2);
     }
     .question-number {
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #555;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #007acc;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
     .question-text {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      min-height: 60px;
+      font-size: 1.25em;
+      margin-bottom: 24px;
+      min-height: 70px;
+      color: #003366;
     }
     .answers label {
       display: block;
-      background: #f0f4ff;
-      margin: 8px 0;
-      padding: 12px 16px;
-      border-radius: 8px;
+      background: #e6f7ff;
+      margin: 10px 0;
+      padding: 14px 20px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.3s, box-shadow 0.3s, color 0.3s;
       user-select: none;
+      border: 2px solid transparent;
+      font-weight: 600;
+      color: #004a99;
+      box-shadow: 0 1px 4px rgba(0, 74, 153, 0.10);
     }
     .answers label:hover {
-      background: #d0e1ff;
+      background: #bae6ff;
+      box-shadow: 0 4px 12px rgba(0, 74, 153, 0.18);
     }
     input[type="radio"] {
       display: none;
     }
     input[type="radio"]:checked + label {
-      background: #1a73e8;
+      background: #007acc;
       color: white;
-      font-weight: bold;
-      box-shadow: 0 0 10px #1a73e8aa;
+      border-color: #005fa3;
+      box-shadow: 0 0 14px #007accaa;
     }
     button {
-      margin-top: 30px;
-      padding: 12px 32px;
-      font-size: 1.1em;
+      margin-top: 36px;
+      padding: 14px 36px;
+      font-size: 1.15em;
       border: none;
-      border-radius: 8px;
-      background: #1a73e8;
+      border-radius: 14px;
+      background: linear-gradient(45deg, #007acc, #005fa3);
       color: white;
       cursor: pointer;
-      transition: background 0.3s;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(0, 122, 204, 0.35);
+      transition: background 0.3s, box-shadow 0.3s;
     }
     button:disabled {
-      background: #a0b9f0;
+      background: #a0cfff;
       cursor: not-allowed;
+      box-shadow: none;
     }
     button:hover:not(:disabled) {
-      background: #1761c6;
+      background: linear-gradient(45deg, #005fa3, #004a80);
+      box-shadow: 0 8px 22px rgba(0, 95, 163, 0.45);
     }
     .result {
-      font-size: 1.3em;
-      font-weight: bold;
-      color: #388e3c;
-      margin-bottom: 20px;
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #007acc;
+      margin-bottom: 24px;
+      text-shadow: 1px 1px 3px #a0d8ff;
     }
     .try-again {
+      color: #cc3300;
+      font-weight: 700;
+      margin-bottom: 24px;
+      font-size: 1.1em;
+    }
+    .note {
+      font-style: italic;
+      color: #555;
+      margin-top: 12px;
+    }
+    /* Animations */
+    .fade-slide-in {
+      animation: fadeSlideIn 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .fade-slide-out {
+      animation: fadeSlideOut 0.5s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeSlideOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+    }
+    .feedback {
+      margin-top: 18px;
+      font-size: 1.15em;
+      min-height: 36px;
+    }
+    .feedback.good {
+      color: #1eb980;
+      font-weight: bold;
+    }
+    .feedback.bad {
       color: #d32f2f;
       font-weight: bold;
-      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container" role="main" aria-live="polite">
     <h1>Quiz – Semaine 1 du défi Excel 🚀</h1>
-    <div id="quiz-content">
-      <!-- Contenu dynamique -->
-    </div>
+    <div id="quiz-content"></div>
   </div>
-
   <script>
     const quizData = [
       {
@@ -179,13 +240,27 @@
     let currentQuestionIndex = 0;
     let score = 0;
 
+    function fadeOutIn(nextCallback) {
+      const current = quizContent.firstElementChild;
+      if (current) {
+        current.classList.remove('fade-slide-in');
+        current.classList.add('fade-slide-out');
+        setTimeout(() => {
+          nextCallback();
+        }, 450);
+      } else {
+        nextCallback();
+      }
+    }
+
     function renderQuestion() {
       const q = quizData[currentQuestionIndex];
       let html = `
-        <div class="question-number">Question ${currentQuestionIndex + 1} / ${quizData.length}</div>
-        <div class="question-text">${q.question}</div>
-        <form id="question-form">
-          <div class="answers">
+        <div class="fade-slide-in">
+          <div class="question-number">Question ${currentQuestionIndex + 1} / ${quizData.length}</div>
+          <div class="question-text">${q.question}</div>
+          <form id="question-form">
+            <div class="answers">
       `;
       q.options.forEach((opt, i) => {
         html += `
@@ -193,13 +268,12 @@
           <label for="option${i}">${opt}</label>
         `;
       });
-      html += `</div>`;
-      if (q.note) {
-        html += `<div class="note">${q.note}</div>`;
-      }
       html += `
-          <button type="submit" disabled>Valider</button>
-        </form>
+            </div>
+            <button type="submit" disabled>Valider</button>
+          </form>
+          <div class="feedback" id="feedback"></div>
+        </div>
       `;
       quizContent.innerHTML = html;
 
@@ -225,54 +299,67 @@
       const isCorrect = selected === q.correct;
       if (isCorrect) score++;
 
-      // Affichage feedback avant de passer à la question suivante
-      let feedback = isCorrect 
-        ? `<p style="color:#388e3c; font-weight:bold;">Bonne réponse ! 🎉</p>`
-        : `<p style="color:#d32f2f; font-weight:bold;">Mauvaise réponse.</p>
-           <p>La bonne réponse était : <strong>${q.options[q.correct]}</strong></p>`;
-
-      quizContent.innerHTML += feedback;
+      // Feedback animé
+      const feedbackDiv = document.getElementById('feedback');
+      if (isCorrect) {
+        feedbackDiv.innerHTML = `<span class="good feedback">Bonne réponse ! 🎉</span>`;
+      } else {
+        let feedback = `<span class="bad feedback">Mauvaise réponse.</span><br>
+        <span>La bonne réponse était : <strong>${q.options[q.correct]}</strong></span>`;
+        // Note explicative pour la question 7 seulement si mauvaise réponse
+        if (currentQuestionIndex === 6 && q.note) {
+          feedback += `<div class="note">${q.note}</div>`;
+        }
+        feedbackDiv.innerHTML = feedback;
+      }
 
       // Désactiver les inputs et bouton
       const inputs = quizContent.querySelectorAll('input, button');
       inputs.forEach(el => el.disabled = true);
 
-      // Attendre 2 secondes puis passer à la question suivante ou résultat
+      // Attente animée avant la question suivante ou le résultat
+      const delay = (!isCorrect && currentQuestionIndex === 6) ? 4000 : 2000;
       setTimeout(() => {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < quizData.length) {
-          renderQuestion();
-        } else {
-          showResult();
-        }
-      }, 2000);
+        fadeOutIn(() => {
+          currentQuestionIndex++;
+          if (currentQuestionIndex < quizData.length) {
+            renderQuestion();
+          } else {
+            renderResult();
+          }
+        });
+      }, delay);
     }
 
-    function showResult() {
+    function renderResult() {
       let html = `
-        <div class="result">🎉 Ton score final : ${score} / ${quizData.length}</div>
+        <div class="fade-slide-in">
+          <div class="result">🎉 Ton score final : ${score} / ${quizData.length}</div>
       `;
       if (score < quizData.length) {
         html += `
-          <div class="try-again">Tu n'as pas atteint le score maximal. Veux-tu réessayer pour t'améliorer ?</div>
+          <div class="try-again">Tu n'as pas atteint le score maximal.<br>Veux-tu réessayer pour t'améliorer ?</div>
           <button id="retry-btn">Recommencer le quiz</button>
         `;
       } else {
-        html += `<p>Excellent travail, tu as obtenu le score maximal ! 👏</p>`;
+        html += `<p style="color:#1eb980;font-weight:700;">Excellent travail, tu as obtenu le score maximal ! 👏</p>`;
       }
+      html += `</div>`;
       quizContent.innerHTML = html;
 
       const retryBtn = document.getElementById('retry-btn');
       if (retryBtn) {
         retryBtn.addEventListener('click', () => {
-          currentQuestionIndex = 0;
-          score = 0;
-          renderQuestion();
+          fadeOutIn(() => {
+            currentQuestionIndex = 0;
+            score = 0;
+            renderQuestion();
+          });
         });
       }
     }
 
-    // Lancement du quiz
+    // Lancement du quiz avec animation
     renderQuestion();
   </script>
 </body>
