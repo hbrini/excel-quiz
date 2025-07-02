@@ -70,11 +70,11 @@
       display: none;
     }
     /* Sélection avant validation */
-    .label-selected {
-      background: #005fa3 !important;
-      color: #fff !important;
-      border-color: #004a80 !important;
-      box-shadow: 0 0 10px #005fa366;
+    input[type="radio"]:checked + label {
+      background: #004a80;
+      color: white;
+      border-color: #003366;
+      box-shadow: 0 0 12px #004a80cc;
     }
     /* Après validation */
     .label-correct {
@@ -301,14 +301,8 @@
       const submitBtn = form.querySelector('button');
       const radios = form.querySelectorAll('input[name="answer"]');
 
-      radios.forEach((radio, idx) => {
+      radios.forEach((radio) => {
         radio.addEventListener('change', () => {
-          // Enlever la sélection précédente
-          radios.forEach((r, j) => {
-            document.getElementById('label'+j).classList.remove('label-selected');
-          });
-          // Ajouter la sélection actuelle
-          document.getElementById('label'+idx).classList.add('label-selected');
           submitBtn.disabled = false;
         });
       });
@@ -335,7 +329,6 @@
       // Colorer les réponses
       for (let i = 0; i < q.options.length; i++) {
         const label = document.getElementById('label'+i);
-        label.classList.remove('label-selected');
         label.classList.add('label-disabled');
         if (i === q.correct) {
           label.classList.add('label-correct');
