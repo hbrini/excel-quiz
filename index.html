@@ -470,70 +470,82 @@
 
             <!-- Question 5 -->
             <div class="question" data-question="5">
-                <div class="question-number">JOUR 5</div>
-                <h2 class="question-text">Que permet l'option "Figer les volets" ?</h2>
+                <div class="question-number">QUESTION 5</div>
+                <h2 class="question-text">Quelle bonne pratique éviter lors d'un tri ou filtre ?</h2>
                 <ul class="options">
                     <li class="option">
                         <input type="radio" id="q5a" name="q5" value="a">
-                        <label for="q5a">Geler ton PC temporairement</label>
+                        <label for="q5a">Trier un tableau structuré</label>
                     </li>
                     <li class="option">
                         <input type="radio" id="q5b" name="q5" value="b">
-                        <label for="q5b">Garder certaines lignes/colonnes visibles au scroll</label>
+                        <label for="q5b">Utiliser plusieurs niveaux de tri</label>
                     </li>
                     <li class="option">
                         <input type="radio" id="q5c" name="q5" value="c">
-                        <label for="q5c">Verrouiller les cellules contre la modification</label>
+                        <label for="q5c">Filtrer avec des critères personnalisés</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q5d" name="q5" value="d">
+                        <label for="q5d">Trier partiellement un tableau sans tout sélectionner</label>
                     </li>
                 </ul>
                 <div class="feedback" id="feedback5">
-                    <strong>Bravo !</strong> Figer les volets permet de garder les en-têtes visibles même en faisant défiler un grand tableau.
+                    <strong>Bravo !</strong> Il faut éviter de trier partiellement un tableau car cela peut désorganiser les relations entre les données.
                 </div>
             </div>
 
             <!-- Question 6 -->
             <div class="question" data-question="6">
-                <div class="question-number">JOUR 6</div>
-                <h2 class="question-text">Quel raccourci transforme un tableau simple en tableau structuré ?</h2>
+                <div class="question-number">QUESTION 6</div>
+                <h2 class="question-text">La mise en forme de base dans Excel sert à :</h2>
                 <ul class="options">
                     <li class="option">
                         <input type="radio" id="q6a" name="q6" value="a">
-                        <label for="q6a">Ctrl + L</label>
+                        <label for="q6a">Protéger les cellules</label>
                     </li>
                     <li class="option">
                         <input type="radio" id="q6b" name="q6" value="b">
-                        <label for="q6b">Ctrl + T</label>
+                        <label for="q6b">Modifier les types de données</label>
                     </li>
                     <li class="option">
                         <input type="radio" id="q6c" name="q6" value="c">
-                        <label for="q6c">Alt + F4</label>
+                        <label for="q6c">Rendre les tableaux plus lisibles et professionnels</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q6d" name="q6" value="d">
+                        <label for="q6d">Créer des macros automatiquement</label>
                     </li>
                 </ul>
                 <div class="feedback" id="feedback6">
-                    <strong>Parfait !</strong> Ctrl + T est le raccourci magique pour créer un tableau structuré avec toutes ses fonctionnalités avancées.
+                    <strong>Parfait !</strong> La mise en forme améliore la lisibilité et donne un aspect professionnel aux tableaux Excel.
                 </div>
             </div>
 
             <!-- Question 7 -->
             <div class="question" data-question="7">
-                <div class="question-number">JOUR 7</div>
-                <h2 class="question-text">Que permet la validation des données ?</h2>
+                <div class="question-number">QUESTION 7</div>
+                <h2 class="question-text">Quel type de données <strong>n'est pas</strong> reconnu par Excel ?</h2>
                 <ul class="options">
                     <li class="option">
                         <input type="radio" id="q7a" name="q7" value="a">
-                        <label for="q7a">Contrôler et limiter les saisies dans les cellules</label>
+                        <label for="q7a">Texte</label>
                     </li>
                     <li class="option">
                         <input type="radio" id="q7b" name="q7" value="b">
-                        <label for="q7b">Ajouter des commentaires automatiquement</label>
+                        <label for="q7b">Booléen</label>
                     </li>
                     <li class="option">
                         <input type="radio" id="q7c" name="q7" value="c">
-                        <label for="q7c">Supprimer automatiquement les erreurs</label>
+                        <label for="q7c">Image insérée</label>
+                    </li>
+                    <li class="option">
+                        <input type="radio" id="q7d" name="q7" value="d">
+                        <label for="q7d">Date</label>
                     </li>
                 </ul>
                 <div class="feedback" id="feedback7">
-                    <strong>Excellent !</strong> La validation des données est un outil puissant pour maintenir la qualité et la cohérence des données saisies.
+                    <strong>Excellent !</strong> L'image n'est pas un type de données de cellule interprété comme les autres types (texte, nombre, date, etc.).
                 </div>
             </div>
         </div>
@@ -742,19 +754,4 @@
                 feedback.classList.remove('correct', 'incorrect');
             });
             
-            showQuestion(1);
-        }
-
-        // Gérer la sélection des réponses
-        document.addEventListener('change', function(e) {
-            if (e.target.type === 'radio') {
-                updateNavigationButtons();
-            }
-        });
-
-        // Initialiser le quiz
-        updateProgress();
-        updateNavigationButtons();
-    </script>
-</body>
-</html>
+            show
