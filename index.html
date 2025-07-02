@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Quiz – Semaine 1 du défi Excel 🚀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -11,234 +11,269 @@
       color: #222;
       margin: 0;
       padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
     .container {
-      max-width: 700px;
-      margin: 40px auto;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 18px rgba(0,0,0,0.07);
       padding: 32px 24px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
     }
     h1 {
-      text-align: center;
       color: #1a73e8;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
-    .intro {
-      text-align: center;
-      font-size: 1.13em;
-      margin-bottom: 30px;
-      color: #555;
-    }
-    .question {
-      margin-bottom: 28px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    .question:last-child {
-      border-bottom: none;
-    }
-    .q-title {
+    .question-number {
       font-weight: bold;
       margin-bottom: 10px;
+      color: #555;
+    }
+    .question-text {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      min-height: 60px;
     }
     .answers label {
       display: block;
-      margin-left: 16px;
-      margin-bottom: 6px;
-      cursor: pointer;
-    }
-    .submit-btn {
-      display: block;
-      margin: 30px auto 0 auto;
-      padding: 12px 32px;
-      background: #1a73e8;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 1.08em;
+      background: #f0f4ff;
+      margin: 8px 0;
+      padding: 12px 16px;
+      border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s;
+      user-select: none;
     }
-    .submit-btn:hover {
+    .answers label:hover {
+      background: #d0e1ff;
+    }
+    input[type="radio"] {
+      display: none;
+    }
+    input[type="radio"]:checked + label {
+      background: #1a73e8;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px #1a73e8aa;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 32px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:disabled {
+      background: #a0b9f0;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
       background: #1761c6;
     }
     .result {
-      text-align: center;
-      font-size: 1.2em;
-      margin-top: 30px;
-      color: #388e3c;
+      font-size: 1.3em;
       font-weight: bold;
-    }
-    .correction {
-      margin-top: 18px;
-      font-size: 1em;
-      background: #f1f8e9;
-      border-left: 4px solid #388e3c;
-      padding: 10px 18px;
-      border-radius: 7px;
-      color: #222;
-    }
-    .good {
       color: #388e3c;
-      font-weight: bold;
+      margin-bottom: 20px;
     }
-    .bad {
+    .try-again {
       color: #d32f2f;
       font-weight: bold;
-    }
-    .note {
-      font-size: 0.98em;
-      color: #888;
-      margin-top: 4px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" role="main" aria-live="polite">
     <h1>Quiz – Semaine 1 du défi Excel 🚀</h1>
-    <div class="intro">
-      Tu as suivi les 7 premiers jours de formation ?<br>
-      Viens tester ce que tu as retenu (et te challenger un peu 😏) !<br>
-      Prêt(e) à prouver tes progrès ? C’est parti !
+    <div id="quiz-content">
+      <!-- Contenu dynamique -->
     </div>
-    <form id="quizForm">
-      <!-- Les questions seront injectées ici par JS -->
-    </form>
-    <div id="result"></div>
   </div>
+
   <script>
-    // Questions et réponses
     const quizData = [
       {
-        question: "1️⃣ Pourquoi utiliser Ctrl + T (ou Ctrl + L selon les versions) pour structurer un tableau ?",
+        question: "Pourquoi utiliser Ctrl + T (ou Ctrl + L selon les versions) pour structurer un tableau ?",
         options: [
-          "A. Pour activer le mode nuit",
-          "B. Pour figer les volets",
-          "C. Pour appliquer automatiquement les filtres, noms dynamiques et formules",
-          "D. Pour masquer les cellules vides"
+          "Pour activer le mode nuit",
+          "Pour figer les volets",
+          "Pour appliquer automatiquement les filtres, noms dynamiques et formules",
+          "Pour masquer les cellules vides"
         ],
         correct: 2
       },
       {
-        question: "2️⃣ Quelle option est disponible dans l’onglet \"Affichage\" ?",
+        question: "Quelle option est disponible dans l’onglet \"Affichage\" ?",
         options: [
-          "A. Trier les données",
-          "B. Figer les volets",
-          "C. Valider les données",
-          "D. Insérer un graphique"
+          "Trier les données",
+          "Figer les volets",
+          "Valider les données",
+          "Insérer un graphique"
         ],
         correct: 1
       },
       {
-        question: "3️⃣ Quel est le principal rôle de la validation des données ?",
+        question: "Quel est le principal rôle de la validation des données ?",
         options: [
-          "A. Limiter les valeurs saisies dans une cellule",
-          "B. Colorer les cellules selon leur contenu",
-          "C. Supprimer les doublons",
-          "D. Fusionner plusieurs lignes"
+          "Limiter les valeurs saisies dans une cellule",
+          "Colorer les cellules selon leur contenu",
+          "Supprimer les doublons",
+          "Fusionner plusieurs lignes"
         ],
         correct: 0
       },
       {
-        question: "4️⃣ Laquelle de ces affirmations est vraie concernant le tri avancé ?",
+        question: "Laquelle de ces affirmations est vraie concernant le tri avancé ?",
         options: [
-          "A. On ne peut trier que par ordre alphabétique",
-          "B. Le tri supprime les doublons",
-          "C. On peut trier selon plusieurs niveaux et couleurs",
-          "D. Le tri est permanent et irréversible"
+          "On ne peut trier que par ordre alphabétique",
+          "Le tri supprime les doublons",
+          "On peut trier selon plusieurs niveaux et couleurs",
+          "Le tri est permanent et irréversible"
         ],
         correct: 2
       },
       {
-        question: "5️⃣ Quelle bonne pratique éviter lors d’un tri ou filtre ?",
+        question: "Quelle bonne pratique éviter lors d’un tri ou filtre ?",
         options: [
-          "A. Trier un tableau structuré",
-          "B. Utiliser plusieurs niveaux de tri",
-          "C. Filtrer avec des critères personnalisés",
-          "D. Trier partiellement un tableau sans tout sélectionner"
+          "Trier un tableau structuré",
+          "Utiliser plusieurs niveaux de tri",
+          "Filtrer avec des critères personnalisés",
+          "Trier partiellement un tableau sans tout sélectionner"
         ],
         correct: 3
       },
       {
-        question: "6️⃣ La mise en forme de base dans Excel sert à :",
+        question: "La mise en forme de base dans Excel sert à :",
         options: [
-          "A. Protéger les cellules",
-          "B. Modifier les types de données",
-          "C. Rendre les tableaux plus lisibles et professionnels",
-          "D. Créer des macros automatiquement"
+          "Protéger les cellules",
+          "Modifier les types de données",
+          "Rendre les tableaux plus lisibles et professionnels",
+          "Créer des macros automatiquement"
         ],
         correct: 2
       },
       {
-        question: "7️⃣ Quel type de données n’est pas reconnu par Excel ?",
+        question: "Quel type de données n’est pas reconnu par Excel ?",
         options: [
-          "A. Texte",
-          "B. Booléen",
-          "C. Image insérée",
-          "D. Date"
+          "Texte",
+          "Booléen",
+          "Image insérée",
+          "Date"
         ],
         correct: 2,
         note: "(L’image n’est pas un type de données de cellule interprété comme les autres types)"
       }
     ];
 
-    // Générer le quiz dans le formulaire
-    const quizForm = document.getElementById('quizForm');
-    quizData.forEach((q, idx) => {
-      const div = document.createElement('div');
-      div.className = 'question';
-      let html = `<div class="q-title">${q.question}</div>`;
-      q.options.forEach((opt, oIdx) => {
+    const quizContent = document.getElementById('quiz-content');
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function renderQuestion() {
+      const q = quizData[currentQuestionIndex];
+      let html = `
+        <div class="question-number">Question ${currentQuestionIndex + 1} / ${quizData.length}</div>
+        <div class="question-text">${q.question}</div>
+        <form id="question-form">
+          <div class="answers">
+      `;
+      q.options.forEach((opt, i) => {
         html += `
-          <label>
-            <input type="radio" name="q${idx}" value="${oIdx}">
-            ${opt}
-          </label>
+          <input type="radio" id="option${i}" name="answer" value="${i}" />
+          <label for="option${i}">${opt}</label>
         `;
       });
+      html += `</div>`;
       if (q.note) {
         html += `<div class="note">${q.note}</div>`;
       }
-      div.innerHTML = html;
-      quizForm.appendChild(div);
-    });
-    // Ajouter le bouton de soumission
-    const submitBtn = document.createElement('button');
-    submitBtn.type = 'submit';
-    submitBtn.className = 'submit-btn';
-    submitBtn.textContent = 'Valider mes réponses';
-    quizForm.appendChild(submitBtn);
+      html += `
+          <button type="submit" disabled>Valider</button>
+        </form>
+      `;
+      quizContent.innerHTML = html;
 
-    // Correction et affichage du résultat
-    quizForm.onsubmit = function(e) {
-      e.preventDefault();
-      let score = 0;
-      let corrections = '';
-      for (let i = 0; i < quizData.length; i++) {
-        const radios = document.getElementsByName('q'+i);
-        let userAnswer = -1;
-        for (let r = 0; r < radios.length; r++) {
-          if (radios[r].checked) userAnswer = r;
-        }
-        if (userAnswer === quizData[i].correct) {
-          score++;
-          corrections += `<div class="correction"><span class="good">Question ${i+1} : Bonne réponse !</span></div>`;
-        } else {
-          corrections += `<div class="correction"><span class="bad">Question ${i+1} : Mauvaise réponse.</span> <br>La bonne réponse était : <span class="good">${quizData[i].options[quizData[i].correct]}</span></div>`;
-        }
-      }
-      document.getElementById('result').innerHTML =
-        `<div class="result">🎉 Ton score : ${score} / ${quizData.length}</div>` +
-        corrections +
-        `<div class="conclusion">Partage ton score ou tes questions dans le groupe pour continuer à progresser ensemble ! 💪</div>`;
-      // Désactiver le quiz après soumission
-      const allInputs = quizForm.querySelectorAll('input');
-      allInputs.forEach(inp => inp.disabled = true);
-      submitBtn.disabled = true;
-      submitBtn.style.opacity = 0.6;
+      const form = document.getElementById('question-form');
+      const submitBtn = form.querySelector('button');
+      const radios = form.querySelectorAll('input[name="answer"]');
+
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          submitBtn.disabled = false;
+        });
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const selected = form.answer.value;
+        checkAnswer(parseInt(selected));
+      });
     }
+
+    function checkAnswer(selected) {
+      const q = quizData[currentQuestionIndex];
+      const isCorrect = selected === q.correct;
+      if (isCorrect) score++;
+
+      // Affichage feedback avant de passer à la question suivante
+      let feedback = isCorrect 
+        ? `<p style="color:#388e3c; font-weight:bold;">Bonne réponse ! 🎉</p>`
+        : `<p style="color:#d32f2f; font-weight:bold;">Mauvaise réponse.</p>
+           <p>La bonne réponse était : <strong>${q.options[q.correct]}</strong></p>`;
+
+      quizContent.innerHTML += feedback;
+
+      // Désactiver les inputs et bouton
+      const inputs = quizContent.querySelectorAll('input, button');
+      inputs.forEach(el => el.disabled = true);
+
+      // Attendre 2 secondes puis passer à la question suivante ou résultat
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+          renderQuestion();
+        } else {
+          showResult();
+        }
+      }, 2000);
+    }
+
+    function showResult() {
+      let html = `
+        <div class="result">🎉 Ton score final : ${score} / ${quizData.length}</div>
+      `;
+      if (score < quizData.length) {
+        html += `
+          <div class="try-again">Tu n'as pas atteint le score maximal. Veux-tu réessayer pour t'améliorer ?</div>
+          <button id="retry-btn">Recommencer le quiz</button>
+        `;
+      } else {
+        html += `<p>Excellent travail, tu as obtenu le score maximal ! 👏</p>`;
+      }
+      quizContent.innerHTML = html;
+
+      const retryBtn = document.getElementById('retry-btn');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', () => {
+          currentQuestionIndex = 0;
+          score = 0;
+          renderQuestion();
+        });
+      }
+    }
+
+    // Lancement du quiz
+    renderQuestion();
   </script>
 </body>
 </html>
