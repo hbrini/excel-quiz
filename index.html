@@ -69,34 +69,14 @@
     input[type="radio"] {
       display: none;
     }
-    /* Animation */
-    .fade-slide-in {
-      animation: fadeSlideIn 0.7s cubic-bezier(.4,0,.2,1);
+    /* Sélection avant validation */
+    .label-selected {
+      background: #005fa3 !important;
+      color: #fff !important;
+      border-color: #004a80 !important;
+      box-shadow: 0 0 10px #005fa366;
     }
-    .fade-slide-out {
-      animation: fadeSlideOut 0.5s cubic-bezier(.4,0,.2,1) forwards;
-    }
-    @keyframes fadeSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    @keyframes fadeSlideOut {
-      from {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(-40px);
-      }
-    }
-    /* Feedback couleurs */
+    /* Après validation */
     .label-correct {
       background: #1eb980 !important;
       color: #fff !important;
@@ -166,6 +146,33 @@
     .feedback.bad {
       color: #d32f2f;
       font-weight: bold;
+    }
+    /* Animation */
+    .fade-slide-in {
+      animation: fadeSlideIn 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .fade-slide-out {
+      animation: fadeSlideOut 0.5s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeSlideOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
     }
   </style>
 </head>
@@ -294,8 +301,14 @@
       const submitBtn = form.querySelector('button');
       const radios = form.querySelectorAll('input[name="answer"]');
 
-      radios.forEach(radio => {
+      radios.forEach((radio, idx) => {
         radio.addEventListener('change', () => {
+          // Enlever la sélection précédente
+          radios.forEach((r, j) => {
+            document.getElementById('label'+j).classList.remove('label-selected');
+          });
+          // Ajouter la sélection actuelle
+          document.getElementById('label'+idx).classList.add('label-selected');
           submitBtn.disabled = false;
         });
       });
@@ -322,6 +335,7 @@
       // Colorer les réponses
       for (let i = 0; i < q.options.length; i++) {
         const label = document.getElementById('label'+i);
+        label.classList.remove('label-selected');
         label.classList.add('label-disabled');
         if (i === q.correct) {
           label.classList.add('label-correct');
@@ -329,6 +343,10 @@
         if (!isCorrect && i === selected) {
           label.classList.add('label-wrong');
         }
+      }
+      // Si bonne réponse sélectionnée, elle devient verte (remplace sélection)
+      if (isCorrect) {
+        document.getElementById('label'+selected).classList.add('label-correct');
       }
 
       // Feedback animé
