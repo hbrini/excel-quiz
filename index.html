@@ -54,12 +54,13 @@
       padding: 14px 20px;
       border-radius: 12px;
       cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s, color 0.3s;
+      transition: background 0.3s, box-shadow 0.3s, color 0.3s, text-decoration 0.3s;
       user-select: none;
       border: 2px solid transparent;
       font-weight: 600;
       color: #004a99;
       box-shadow: 0 1px 4px rgba(0, 74, 153, 0.10);
+      position: relative;
     }
     .answers label:hover {
       background: #bae6ff;
@@ -68,11 +69,50 @@
     input[type="radio"] {
       display: none;
     }
-    input[type="radio"]:checked + label {
-      background: #007acc;
-      color: white;
-      border-color: #005fa3;
-      box-shadow: 0 0 14px #007accaa;
+    /* Animation */
+    .fade-slide-in {
+      animation: fadeSlideIn 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .fade-slide-out {
+      animation: fadeSlideOut 0.5s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeSlideOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+    }
+    /* Feedback couleurs */
+    .label-correct {
+      background: #1eb980 !important;
+      color: #fff !important;
+      border-color: #1eb980 !important;
+      box-shadow: 0 0 14px #1eb98088;
+    }
+    .label-wrong {
+      background: #ffd6d6 !important;
+      color: #d32f2f !important;
+      border-color: #d32f2f !important;
+      text-decoration: line-through;
+      box-shadow: 0 0 10px #d32f2f33;
+    }
+    .label-disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
     }
     button {
       margin-top: 36px;
@@ -113,33 +153,6 @@
       font-style: italic;
       color: #555;
       margin-top: 12px;
-    }
-    /* Animations */
-    .fade-slide-in {
-      animation: fadeSlideIn 0.7s cubic-bezier(.4,0,.2,1);
-    }
-    .fade-slide-out {
-      animation: fadeSlideOut 0.5s cubic-bezier(.4,0,.2,1) forwards;
-    }
-    @keyframes fadeSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    @keyframes fadeSlideOut {
-      from {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(-40px);
-      }
     }
     .feedback {
       margin-top: 18px;
@@ -265,7 +278,7 @@
       q.options.forEach((opt, i) => {
         html += `
           <input type="radio" id="option${i}" name="answer" value="${i}" />
-          <label for="option${i}">${opt}</label>
+          <label for="option${i}" id="label${i}">${opt}</label>
         `;
       });
       html += `
@@ -289,8 +302,8 @@
 
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        const selected = form.answer.value;
-        checkAnswer(parseInt(selected));
+        const selected = parseInt(form.answer.value);
+        checkAnswer(selected);
       });
     }
 
@@ -298,6 +311,25 @@
       const q = quizData[currentQuestionIndex];
       const isCorrect = selected === q.correct;
       if (isCorrect) score++;
+
+      // Désactiver tous les inputs
+      const radios = quizContent.querySelectorAll('input[name="answer"]');
+      radios.forEach(radio => radio.disabled = true);
+
+      // Désactiver le bouton
+      quizContent.querySelector('button').disabled = true;
+
+      // Colorer les réponses
+      for (let i = 0; i < q.options.length; i++) {
+        const label = document.getElementById('label'+i);
+        label.classList.add('label-disabled');
+        if (i === q.correct) {
+          label.classList.add('label-correct');
+        }
+        if (!isCorrect && i === selected) {
+          label.classList.add('label-wrong');
+        }
+      }
 
       // Feedback animé
       const feedbackDiv = document.getElementById('feedback');
@@ -313,12 +345,8 @@
         feedbackDiv.innerHTML = feedback;
       }
 
-      // Désactiver les inputs et bouton
-      const inputs = quizContent.querySelectorAll('input, button');
-      inputs.forEach(el => el.disabled = true);
-
       // Attente animée avant la question suivante ou le résultat
-      const delay = (!isCorrect && currentQuestionIndex === 6) ? 4000 : 2000;
+      const delay = 5000;
       setTimeout(() => {
         fadeOutIn(() => {
           currentQuestionIndex++;
